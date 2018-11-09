@@ -1,0 +1,13 @@
+MAS jazn {
+
+	infrastructure: Centralised
+
+	agents:
+		ball agentClass Ball;
+		referee agentClass Referee;
+		forli_city agentClass ForliCity #11;
+		cesena_united agentClass CesenaUnited #11;
+
+	aslSourcePath:
+		"src/asl";
+}
