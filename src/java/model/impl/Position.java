@@ -7,7 +7,7 @@ public class Position implements IPosition {
 	private int x;
 	private int y;
 	
-	public void init(int x, int y) {
+	public Position(int x, int y) {
 		this.setPosition(x,y);
 	}
 	
