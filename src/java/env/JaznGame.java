@@ -15,11 +15,13 @@ import utils.Utils;
 
 public class JaznGame {
 
-	private Map<Team,Map<Role,List<IPlayer>>> players;
+	private Map<Team, Map<Role, List<IPlayer>>> players;
 	private IBall ball;
 	private List<IPlayer> goals;
+	private JaznEnvironment env;
 
-	public JaznGame() {
+	public JaznGame(JaznEnvironment env) {
+		this.env = env;
 		System.out.println("Game manager initialized successfully.");
 	}
 
@@ -30,20 +32,21 @@ public class JaznGame {
 		Team[] teams = Team.values();
 		Role[] roles = Role.values();
 
-		this.players = new HashMap<Team,Map<Role,List<IPlayer>>>();
+		this.players = new HashMap<Team, Map<Role, List<IPlayer>>>();
 		this.goals = new ArrayList<IPlayer>();
 
-		System.out.println("Players on the pitch for today's match between " + teams[0] + " and " + teams[1] + " are: ");
+		System.out
+				.println("Players on the pitch for today's match between " + teams[0] + " and " + teams[1] + " are: ");
 
-		for(Team t : teams) {
+		for (Team t : teams) {
 			int jersey = 1;
 
 			HashMap<Role, List<IPlayer>> rls = new HashMap<Role, List<IPlayer>>();
 
-			for(Role r : roles) {
+			for (Role r : roles) {
 				ArrayList<IPlayer> pls = new ArrayList<IPlayer>();
 
-				for(int i = 0; i < r.getCount(); i++) {
+				for (int i = 0; i < r.getCount(); i++) {
 					IPlayer p = new Player(t, jersey, r);
 					System.out.println(" - " + p.toString());
 					pls.add(p);
@@ -54,15 +57,18 @@ public class JaznGame {
 			}
 			this.players.put(t, rls);
 		}
+		
+		this.env.setPlayerPercepts(this.players);
 
-
-		ball = new Ball(0,0);
+		ball = new Ball(0, 0);
 
 		IPlayer kickoff = Utils.randomIn(this.players.get(Team.FORLI_CITY).get(Role.GOALKEEPER));
-
 		System.out.println("The player assigned for kickoff is " + kickoff.toString());
 		System.out.println("Referee, WHISTLE!");
+		
 
-		//kickoff.receive(ball);
+		this.env.whistle(kickoff);
+		
+		// kickoff.receive(ball);
 	}
 }

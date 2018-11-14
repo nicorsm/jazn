@@ -10,5 +10,6 @@ public interface IPlayer {
 	public IPosition getPosition();
 	public Role getRole();
 	public void receive(IBall ball);
+	public String getName();
 	
 }

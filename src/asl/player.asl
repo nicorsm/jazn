@@ -2,17 +2,22 @@
 
 /* Initial beliefs and rules */
 
+
+whistled(_).
+
 //ballIsMine :- .my_name(name) & ballOwnership(owner) & (ball == owner).
 
-//!beginPlaying.
+!beginPlaying.
 
 /* Initial goals */
 
 
 /* Plans */
 
-//+!beginPlaying <- ?hasWhistled(referee).
++!beginPlaying : whistled(referee) <- true.
 
+
++whistled(referee): true <- .print("HOORAY!").
 
 
 

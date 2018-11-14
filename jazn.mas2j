@@ -5,10 +5,9 @@ MAS jazn {
 	environment: env.JaznEnvironment
 
 	agents:
-		bl ball; // agentClass Ball;
-		rf referee; // agentClass Referee;
-		fc player #11; // agentClass Player #11;
-		cu player #11; // agentClass Player #11;
+		referee; // agentClass Referee;
+		forliCity player #11; // agentClass Player #11;
+		cesenaUnited player #11; // agentClass Player #11;
 
 	aslSourcePath:
 		"src/asl";

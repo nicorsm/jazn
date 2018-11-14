@@ -1,8 +1,8 @@
 package model.impl;
 
 public enum Team {
-	FORLI_CITY("fc"),
-	CESENA_UNITED("cu");
+	FORLI_CITY("forliCity"),
+	CESENA_UNITED("cesenaUnited");
 	
     private final String shortName;
 

@@ -12,8 +12,8 @@ whistled(referee).
 
 +!startMatch : true <- prepareField.
 
-+!whistle: whistled(referee) <- .send(forliCity, tell, whistled(referee));
-								.send(cesenaUnited, tell, whistled(referee)).
++!whistle: whistled(referee) <- .broadcast(forliCity, tell, whistled(referee));
+								.broadcast(cesenaUnited, tell, whistled(referee)).
 
 +whistled(_): ~whistled(referee) <- -~whistled(referee).
 
