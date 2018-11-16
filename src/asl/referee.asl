@@ -2,8 +2,6 @@
 
 /* Initial beliefs and rules */
 
-whistled(referee).
-
 /* Initial goals */
 
 !startMatch.
@@ -12,10 +10,13 @@ whistled(referee).
 
 +!startMatch : true <- prepareField.
 
-+!whistle: whistled(referee) <- .broadcast(forliCity, tell, whistled(referee));
-								.broadcast(cesenaUnited, tell, whistled(referee)).
++whistled : whistled <- !tellWhistle.
 
-+whistled(_): ~whistled(referee) <- -~whistled(referee).
++!tellWhistle: whistled <- .print("WHISTLING..."); .broadcast(tell, startGame(referee)).
+
+
+
+//+whistled(_): ~whistled(referee) <- -~whistled(referee).
 
 //if not whistled, do no-op.
 

@@ -26,7 +26,7 @@ public class JaznEnvironment extends Environment {
 	
 	public void whistle(IPlayer kickoff) {
 		log.info("Adding a percept for whistle");
-		addPercept("referee", Literal.parseLiteral("whistle(referee)"));
+		addPercept("referee", Literal.parseLiteral("whistled"));
 		addPercept(kickoff.getName(), Literal.parseLiteral("ball"));
 	}
 	
