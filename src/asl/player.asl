@@ -6,17 +6,25 @@
 
 /* Initial goals */
 
-//+!refereeHasWhistled : not playing <- -playing; .print("OMG HAS WHISTLED!").
-+startGame(referee) : true <- .print("OMG HAS WHISTLED!"); !handleBall.
+//+startGame(referee) : true <- .print("OMG HAS WHISTLED!"); !handleBall.
 
-+!handleBall : ball & role(FORWARD) <- .print("CAN TRY GOAL").// !tryGoal.
-+!handleBall : ball & ~role(FORWARD)<- .print("SHOULD PASS BALL").// !passBall.
-+!handleBall : ~ball <- .print("NO BALL"); true.
++ball : true <- .print("GOT THE BALL, THANKS BRO!"); !handleBall.
+
++!handleBall : ball & forward <- .print("CAN TRY GOAL"); !wait_randomly; !tryGoal.
++!handleBall : ball & not forward <- .print("SHOULD PASS BALL"); !wait_randomly; !passBall.
++!handleBall : not ball <- true.
 
 +!tryGoal <- true.
-+!passBall <- true.
++!passBall : goalkeeper <- -ball; passTo_defender.
++!passBall : defender <- -ball; passTo_midfielder.
++!passBall : midfielder <- -ball; passTo_forward.
 
 
++!wait_randomly <-
+	.random(R);
+	.wait(R * 5000).
+	
+	
 /* Plans */
 
 //+!beginPlaying : whistled(referee) <- .print("URRA!").
@@ -27,7 +35,45 @@
 
 
 //+!startMatch : not gameEnded <- !kickBall.
+/*
+ * 
+ * 
+	public void receive(IBall ball) {
 
+		Role roleToPass = null;
+		boolean tryGoal = false;
+		ball.setOwner(this);
+		System.out.println(this.toString() + " is deciding who will be the receiver of the ball");
+		
+		switch(this.role){
+			case DEFENDER: 		roleToPass = Role.MIDFIELDER; 	break;
+			case FORWARD:  		tryGoal = true; 				break;
+			case GOALKEEPER:	roleToPass = Role.DEFENDER;		break;
+			case MIDFIELDER:	roleToPass = Role.FORWARD;		break;
+			default:											break;
+		}
+
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(tryGoal) {
+			System.out.println(this.toString() + " is trying to score...");
+			Referee.getInstance().scored(this);
+		} else if(roleToPass != null) {
+			IPlayer p = Utils.randomIn(Referee.getInstance().getPlayers(this.team, roleToPass)); // can also be a peer
+			System.out.println(this.toString() + " says that the receiver will be " + p.toString());
+			p.receive(ball);
+		}
+		
+		
+	}
+	
+ * 
+ */
 
 /* 
 

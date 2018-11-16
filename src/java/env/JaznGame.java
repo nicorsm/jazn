@@ -71,4 +71,26 @@ public class JaznGame {
 		
 		// kickoff.receive(ball);
 	}
+	
+
+	public List<IPlayer> getPlayers(Team t, Role r) {
+		return this.players.get(t).get(r);
+	}
+	
+	public boolean scored(Player p) {
+		goals.add(p);
+		System.out.println("GOAAAAAL by " + p.toString());
+		return true;
+	}
+	
+	public int goalsBy(Team t) {
+		int goals = 0;
+		for(IPlayer p : this.goals) {
+			if(p.getTeam() == t) {
+				goals++;
+			}
+		}
+		return goals;
+	}
+	
 }

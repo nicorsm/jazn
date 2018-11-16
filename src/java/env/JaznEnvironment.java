@@ -7,13 +7,16 @@ import java.util.logging.Logger;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
+import model.impl.Referee;
 import model.impl.Role;
 import model.impl.Team;
 import model.interfaces.IPlayer;
+import utils.Utils;
 
 public class JaznEnvironment extends Environment {
 
 	public static final Literal prepareField = Literal.parseLiteral("prepareField");
+	public static final String passToPrefix = "passTo_";
 	private JaznGame gameManager;
 	private Logger log = Logger.getLogger("jazn."+JaznEnvironment.class.getName());
     
@@ -49,7 +52,7 @@ public class JaznEnvironment extends Environment {
 					String jerseyPercept = "jersey(" + p.getJerseyNumber() + ")";
 					addPercept(p.getName(), Literal.parseLiteral(jerseyPercept));
 					
-					String rolePercept = "role(" + p.getRole().toString() + ")";
+					String rolePercept = p.getRole().toString().toLowerCase();
 					addPercept(p.getName(), Literal.parseLiteral(rolePercept));
 				}
 			}
@@ -68,8 +71,30 @@ public class JaznEnvironment extends Environment {
 			gameManager.prepareField();
 			execute = true;
 		}
+		
+		for(Role r: Role.values()) {
+
+			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
+				log.info("Passing ball to " + r.name());
+				passBall(agName, r);
+				execute = true;
+			}
+		}
 		return execute;
 	}
 	
+	private void passBall(String sender, Role r) {
+
+		for(Team t : Team.values()) {
+			if(sender.startsWith(t.getShortName())) {
+				IPlayer p = Utils.randomIn(this.gameManager.getPlayers(t, r)); // can also be a peer
+				
+				addPercept(p.getName(), Literal.parseLiteral("ball"));
+				//System.out.println(this.toString() + " says that the receiver will be " + p.toString());
+				//p.receive(ball);
+			}	
+		}
+		
+	}
 	
 }
