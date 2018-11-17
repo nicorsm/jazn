@@ -16,6 +16,7 @@ import utils.Utils;
 public class JaznEnvironment extends Environment {
 
 	public static final Literal prepareField = Literal.parseLiteral("prepareField");
+	public static final Literal tryGoal = Literal.parseLiteral("tryGoal");
 	public static final String passToPrefix = "passTo_";
 	private JaznGame gameManager;
 	private Logger log = Logger.getLogger("jazn."+JaznEnvironment.class.getName());
@@ -30,7 +31,7 @@ public class JaznEnvironment extends Environment {
 	public void whistle(IPlayer kickoff) {
 		log.info("Adding a percept for whistle");
 		addPercept("referee", Literal.parseLiteral("whistled"));
-		addPercept(kickoff.getName(), Literal.parseLiteral("ball"));
+		addPercept(kickoff.getName(), Literal.parseLiteral("~ball"));
 	}
 	
 	public void setPlayerPercepts(Map<Team, Map<Role, List<IPlayer>>> map) {
@@ -72,6 +73,17 @@ public class JaznEnvironment extends Environment {
 			execute = true;
 		}
 		
+		if(action.equals(tryGoal)) {
+			IPlayer player = this.gameManager.getPlayerFromAgentName(agName);
+			if(player == null) {
+				return execute;
+			}
+			
+			tryGoal(agName, player);
+			
+			execute = true;
+		}
+		
 		for(Role r: Role.values()) {
 
 			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
@@ -84,17 +96,31 @@ public class JaznEnvironment extends Environment {
 	}
 	
 	private void passBall(String sender, Role r) {
-
+		
 		for(Team t : Team.values()) {
 			if(sender.startsWith(t.getShortName())) {
 				IPlayer p = Utils.randomIn(this.gameManager.getPlayers(t, r)); // can also be a peer
 				
-				addPercept(p.getName(), Literal.parseLiteral("ball"));
+				addPercept(p.getName(), Literal.parseLiteral("~ball"));
 				//System.out.println(this.toString() + " says that the receiver will be " + p.toString());
 				//p.receive(ball);
 			}	
 		}
 		
+	}
+	
+	private void tryGoal(String agName, IPlayer player) {
+		if(Utils.shouldTryGoal()) {
+			this.gameManager.scored(player);
+		} else {
+			log.info("No way :(");
+		}
+		
+		Team other = player.getTeam().getOtherTeam();
+		IPlayer goalkeeper = this.gameManager.getPlayers(other, Role.GOALKEEPER).get(0);
+		log.info("Ball is now of " + goalkeeper.toString());
+		passBall(goalkeeper.getName(), goalkeeper.getRole());
+	
 	}
 	
 }

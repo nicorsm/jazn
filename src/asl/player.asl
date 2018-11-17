@@ -10,11 +10,10 @@
 
 +ball : true <- .print("GOT THE BALL, THANKS BRO!"); !handleBall.
 
-+!handleBall : ball & forward <- .print("CAN TRY GOAL"); !wait_randomly; !tryGoal.
++!handleBall : ball & forward <- .print("CAN TRY GOAL"); !wait_randomly; -ball; tryGoal.
 +!handleBall : ball & not forward <- .print("SHOULD PASS BALL"); !wait_randomly; !passBall.
 +!handleBall : not ball <- true.
 
-+!tryGoal <- true.
 +!passBall : goalkeeper <- -ball; passTo_defender.
 +!passBall : defender <- -ball; passTo_midfielder.
 +!passBall : midfielder <- -ball; passTo_forward.

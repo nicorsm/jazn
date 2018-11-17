@@ -72,12 +72,31 @@ public class JaznGame {
 		// kickoff.receive(ball);
 	}
 	
+	public IPlayer getPlayerFromAgentName(String agentName) {
+		for(Team t: Team.values()) {
+			if(agentName.startsWith(t.getShortName())) {
+				int jersey = Integer.parseInt(agentName.replace(t.getShortName(), ""));
+				
+				Map<Role, List<IPlayer>> rose = this.players.get(t);
+				
+				for(Role r: rose.keySet()) {
+					for(IPlayer p: rose.get(r)) {
+						if(p.getJerseyNumber() == jersey) {
+							return p;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 
 	public List<IPlayer> getPlayers(Team t, Role r) {
 		return this.players.get(t).get(r);
 	}
 	
-	public boolean scored(Player p) {
+	public boolean scored(IPlayer p) {
 		goals.add(p);
 		System.out.println("GOAAAAAL by " + p.toString());
 		return true;
