@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
+import model.impl.Player;
 import model.impl.Referee;
 import model.impl.Role;
 import model.impl.Team;
@@ -109,10 +110,14 @@ public class JaznEnvironment extends Environment {
 	private void passBall(String sender, Role r) {
 
 		clearBall(sender);
+
+		IPlayer senderAgent = this.gameManager.getPlayerFromAgentName(sender);
 		
 		for(Team t : Team.values()) {
 			if(sender.startsWith(t.getShortName())) {
-				IPlayer p = Utils.randomIn(this.gameManager.getPlayers(t, r)); // can also be a peer
+				
+				List<IPlayer> nextLine = this.gameManager.getPlayers(t, r);
+				IPlayer p = Utils.randomIn(nextLine); // can also be a peer
 
 				log.info("Passing ball to " +  p.toString());
 				//log.info("Adding ball percept to " + p.getName());

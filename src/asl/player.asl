@@ -21,7 +21,7 @@
 
 +!wait_randomly <-
 	.random(R);
-	.wait(R * 500).
+	.wait(R * 5000).
 	
 	
 /* Plans */
