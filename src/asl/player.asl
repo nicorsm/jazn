@@ -8,20 +8,20 @@
 
 //+startGame(referee) : true <- .print("OMG HAS WHISTLED!"); !handleBall.
 
-+ball : true <- .print("GOT THE BALL, THANKS BRO!"); !handleBall.
++ball : true <-  !handleBall. //.print("GOT THE BALL, THANKS BRO!");
 
-+!handleBall : ball & forward <- .print("CAN TRY GOAL"); !wait_randomly; -ball; tryGoal.
-+!handleBall : ball & not forward <- .print("SHOULD PASS BALL"); !wait_randomly; !passBall.
++!handleBall : ball & forward <- .print("CAN TRY GOAL"); !wait_randomly; .abolish(ball); tryGoal. //
++!handleBall : ball & not forward <- .print("SHOULD PASS BALL"); !wait_randomly; .abolish(ball); !passBall. //
 +!handleBall : not ball <- true.
 
-+!passBall : goalkeeper <- -ball; passTo_defender.
-+!passBall : defender <- -ball; passTo_midfielder.
-+!passBall : midfielder <- -ball; passTo_forward.
++!passBall : goalkeeper <- passTo_defender.
++!passBall : defender <- passTo_midfielder.
++!passBall : midfielder <- passTo_forward.
 
 
 +!wait_randomly <-
 	.random(R);
-	.wait(R * 5000).
+	.wait(R * 500).
 	
 	
 /* Plans */

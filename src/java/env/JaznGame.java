@@ -57,31 +57,30 @@ public class JaznGame {
 			}
 			this.players.put(t, rls);
 		}
-		
-		this.env.setPlayerPercepts(this.players);
+
+		this.env.setPlayersPercepts(this.players);
 
 		ball = new Ball(0, 0);
 
 		IPlayer kickoff = Utils.randomIn(this.players.get(Team.FORLI_CITY).get(Role.GOALKEEPER));
 		System.out.println("The player assigned for kickoff is " + kickoff.toString());
 		System.out.println("Referee, WHISTLE!");
-		
 
 		this.env.whistle(kickoff);
-		
+
 		// kickoff.receive(ball);
 	}
-	
+
 	public IPlayer getPlayerFromAgentName(String agentName) {
-		for(Team t: Team.values()) {
-			if(agentName.startsWith(t.getShortName())) {
+		for (Team t : Team.values()) {
+			if (agentName.startsWith(t.getShortName())) {
 				int jersey = Integer.parseInt(agentName.replace(t.getShortName(), ""));
-				
+
 				Map<Role, List<IPlayer>> rose = this.players.get(t);
-				
-				for(Role r: rose.keySet()) {
-					for(IPlayer p: rose.get(r)) {
-						if(p.getJerseyNumber() == jersey) {
+
+				for (Role r : rose.keySet()) {
+					for (IPlayer p : rose.get(r)) {
+						if (p.getJerseyNumber() == jersey) {
 							return p;
 						}
 					}
@@ -90,26 +89,36 @@ public class JaznGame {
 		}
 		return null;
 	}
-	
 
 	public List<IPlayer> getPlayers(Team t, Role r) {
 		return this.players.get(t).get(r);
 	}
-	
+
 	public boolean scored(IPlayer p) {
 		goals.add(p);
 		System.out.println("GOAAAAAL by " + p.toString());
+		System.out.println("Current score: ");
+		
+		for(Team t : Team.values()) {
+			int goals = 0;
+			for(IPlayer player : this.goals) {
+				if(player.getTeam() == t) {
+					goals++;
+				}
+			}
+			System.out.println(" - " + t.name() + " : " + goals);
+		}
 		return true;
 	}
-	
+
 	public int goalsBy(Team t) {
 		int goals = 0;
-		for(IPlayer p : this.goals) {
-			if(p.getTeam() == t) {
+		for (IPlayer p : this.goals) {
+			if (p.getTeam() == t) {
 				goals++;
 			}
 		}
 		return goals;
 	}
-	
+
 }

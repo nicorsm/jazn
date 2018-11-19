@@ -14,7 +14,7 @@ public class Utils {
 	}
 
 	public static boolean shouldTryGoal() {
-		return Math.random() > 0.99;
+		return Math.random() > 0.80;
 	}
 }
 

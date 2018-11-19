@@ -17,6 +17,7 @@ public class JaznEnvironment extends Environment {
 
 	public static final Literal prepareField = Literal.parseLiteral("prepareField");
 	public static final Literal tryGoal = Literal.parseLiteral("tryGoal");
+	public static final Literal ball = Literal.parseLiteral("ball");
 	public static final String passToPrefix = "passTo_";
 	private JaznGame gameManager;
 	private Logger log = Logger.getLogger("jazn."+JaznEnvironment.class.getName());
@@ -31,10 +32,10 @@ public class JaznEnvironment extends Environment {
 	public void whistle(IPlayer kickoff) {
 		log.info("Adding a percept for whistle");
 		addPercept("referee", Literal.parseLiteral("whistled"));
-		addPercept(kickoff.getName(), Literal.parseLiteral("~ball"));
+		addPercept(kickoff.getName(), ball);
 	}
 	
-	public void setPlayerPercepts(Map<Team, Map<Role, List<IPlayer>>> map) {
+	public void setPlayersPercepts(Map<Team, Map<Role, List<IPlayer>>> map) {
 		
 		log.info("Adding percepts for players...");
 		
@@ -47,14 +48,7 @@ public class JaznEnvironment extends Environment {
 				List<IPlayer> players = rose.get(r);
 				
 				for(IPlayer p: players) {
-					String teamPercept = "team(" + p.getTeam().getShortName() + ")";
-					addPercept(p.getName(), Literal.parseLiteral(teamPercept));
-
-					String jerseyPercept = "jersey(" + p.getJerseyNumber() + ")";
-					addPercept(p.getName(), Literal.parseLiteral(jerseyPercept));
-					
-					String rolePercept = p.getRole().toString().toLowerCase();
-					addPercept(p.getName(), Literal.parseLiteral(rolePercept));
+					setPerceptsFor(p);
 				}
 			}
 			
@@ -62,6 +56,17 @@ public class JaznEnvironment extends Environment {
 		
 		log.info("Percepts adding completed.");
 		
+	}
+	
+	private void setPerceptsFor(IPlayer p) {
+		String teamPercept = "team(" + p.getTeam().getShortName() + ")";
+		addPercept(p.getName(), Literal.parseLiteral(teamPercept));
+
+		String jerseyPercept = "jersey(" + p.getJerseyNumber() + ")";
+		addPercept(p.getName(), Literal.parseLiteral(jerseyPercept));
+		
+		String rolePercept = p.getRole().toString().toLowerCase();
+		addPercept(p.getName(), Literal.parseLiteral(rolePercept));
 	}
 	
 	@Override
@@ -87,7 +92,6 @@ public class JaznEnvironment extends Environment {
 		for(Role r: Role.values()) {
 
 			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
-				log.info("Passing ball to " + r.name());
 				passBall(agName, r);
 				execute = true;
 			}
@@ -95,13 +99,24 @@ public class JaznEnvironment extends Environment {
 		return execute;
 	}
 	
+	private void clearBall(String sender) {
+		clearPercepts(sender);
+		IPlayer senderAgent = this.gameManager.getPlayerFromAgentName(sender);
+		setPerceptsFor(senderAgent);
+		
+	}
+	
 	private void passBall(String sender, Role r) {
+
+		clearBall(sender);
 		
 		for(Team t : Team.values()) {
 			if(sender.startsWith(t.getShortName())) {
 				IPlayer p = Utils.randomIn(this.gameManager.getPlayers(t, r)); // can also be a peer
-				
-				addPercept(p.getName(), Literal.parseLiteral("~ball"));
+
+				log.info("Passing ball to " +  p.toString());
+				//log.info("Adding ball percept to " + p.getName());
+				addPercept(p.getName(), ball);
 				//System.out.println(this.toString() + " says that the receiver will be " + p.toString());
 				//p.receive(ball);
 			}	
@@ -110,6 +125,11 @@ public class JaznEnvironment extends Environment {
 	}
 	
 	private void tryGoal(String agName, IPlayer player) {
+		
+		clearBall(agName);
+
+		log.info("OMG " + player.toString() + " IS TRYING A GOAL...");
+		
 		if(Utils.shouldTryGoal()) {
 			this.gameManager.scored(player);
 		} else {
