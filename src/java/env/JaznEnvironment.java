@@ -113,18 +113,35 @@ public class JaznEnvironment extends Environment {
 
 		IPlayer senderAgent = this.gameManager.getPlayerFromAgentName(sender);
 		
+		boolean intercepts = Utils.shouldInterceptBall() && r != Role.GOALKEEPER;
+		
 		for(Team t : Team.values()) {
-			if(sender.startsWith(t.getShortName())) {
+			
+			boolean isFromMyTeam = sender.startsWith(t.getShortName());
+			
+			if((isFromMyTeam && !intercepts) || (!isFromMyTeam && intercepts)){
 				
-				List<IPlayer> nextLine = this.gameManager.getPlayers(t, r);
+				Role role = r;
+				Role inverse = senderAgent.getRole().getInverse();
+				if(intercepts && inverse != null) {
+					role = inverse;
+				}
+				
+				List<IPlayer> nextLine = this.gameManager.getPlayers(t, role);
 				IPlayer p = Utils.randomIn(nextLine); // can also be a peer
 
-				log.info("Passing ball to " +  p.toString());
+				if(intercepts) {
+					log.info("BALL WAS INTERCEPTED BY " + p.toString());
+				} else {
+					log.info("Passing ball to " +  p.toString());
+				}
+				
 				//log.info("Adding ball percept to " + p.getName());
 				addPercept(p.getName(), ball);
 				//System.out.println(this.toString() + " says that the receiver will be " + p.toString());
 				//p.receive(ball);
-			}	
+				return;
+			}
 		}
 		
 	}

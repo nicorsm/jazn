@@ -16,5 +16,9 @@ public class Utils {
 	public static boolean shouldTryGoal() {
 		return Math.random() > 0.80;
 	}
+	
+	public static boolean shouldInterceptBall() {
+		return Math.random() > 0.60;
+	}
 }
 
