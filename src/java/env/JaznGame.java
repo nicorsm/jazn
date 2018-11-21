@@ -62,7 +62,8 @@ public class JaznGame {
 
 		ball = new Ball(0, 0);
 
-		IPlayer kickoff = Utils.randomIn(this.players.get(Team.FORLI_CITY).get(Role.GOALKEEPER));
+		Team randomTeam = Utils.randomIn(Team.values());
+		IPlayer kickoff = Utils.randomIn(this.players.get(randomTeam).get(Role.MIDFIELDER));
 		System.out.println("The player assigned for kickoff is " + kickoff.toString());
 		System.out.println("Referee, WHISTLE!");
 

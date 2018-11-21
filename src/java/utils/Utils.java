@@ -9,6 +9,10 @@ public class Utils {
 		return list.get(new Random().nextInt(list.size()));
 	}
 	
+	public static <T> T randomIn(T[] list) {
+		return list[new Random().nextInt(list.length)];
+	}
+	
 	public static boolean getRandomBoolean() {
 		return Math.random() < 0.5;
 	}
