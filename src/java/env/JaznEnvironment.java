@@ -49,7 +49,14 @@ public class JaznEnvironment extends Environment {
 				List<IPlayer> players = rose.get(r);
 				
 				for(IPlayer p: players) {
-					setPerceptsFor(p);
+					String teamPercept = "team(" + p.getTeam().getShortName() + ")";
+					addPercept(p.getName(), Literal.parseLiteral(teamPercept));
+
+					String jerseyPercept = "jersey(" + p.getJerseyNumber() + ")";
+					addPercept(p.getName(), Literal.parseLiteral(jerseyPercept));
+					
+					String rolePercept = p.getRole().toString().toLowerCase();
+					addPercept(p.getName(), Literal.parseLiteral(rolePercept));
 				}
 			}
 			
@@ -57,17 +64,6 @@ public class JaznEnvironment extends Environment {
 		
 		log.info("Percepts adding completed.");
 		
-	}
-	
-	private void setPerceptsFor(IPlayer p) {
-		String teamPercept = "team(" + p.getTeam().getShortName() + ")";
-		addPercept(p.getName(), Literal.parseLiteral(teamPercept));
-
-		String jerseyPercept = "jersey(" + p.getJerseyNumber() + ")";
-		addPercept(p.getName(), Literal.parseLiteral(jerseyPercept));
-		
-		String rolePercept = p.getRole().toString().toLowerCase();
-		addPercept(p.getName(), Literal.parseLiteral(rolePercept));
 	}
 	
 	@Override
@@ -101,10 +97,7 @@ public class JaznEnvironment extends Environment {
 	}
 	
 	private void clearBall(String sender) {
-		clearPercepts(sender);
-		IPlayer senderAgent = this.gameManager.getPlayerFromAgentName(sender);
-		setPerceptsFor(senderAgent);
-		
+		removePercept(sender, ball);
 	}
 	
 	private void passBall(String sender, Role r) {
