@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry excluding="*.asl" kind="src" path="src/asl" />
-	<classpathentry kind="src" path="src/java" />
-	<classpathentry kind="lib" path="/Users/nicola/Projects/UNIBO-LM/ISI5/SA_Omicini/jason/libs/jason-2.3.jar"/>
-<classpathentry kind="output" path="bin/classes"/></classpath>
+	<classpathentry excluding="*.asl" kind="src" path="src/asl"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="lib" path="/Users/nicola/Projects/UNIBO-LM/ISI5/SA_Omicini/jason/libs/jason-2.3.jar" sourcepath="/Users/nicola/Projects/UNIBO-LM/ISI5/SA_Omicini/jason/libs/jason-2.3.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

@@ -9,16 +9,16 @@ import model.interfaces.IPlayer;
 
 public class JaznUtils {
 
-	public static List<IPlayer> getPlayers(JaznEnvironment context, Team t, Role r) {
-		return context.getPlayers().get(t).get(r);
+	public static List<IPlayer> getPlayers(Team t, Role r) {
+		return JaznEnvironment.getPlayers().get(t).get(r);
 	}
 
-	public static IPlayer getPlayerFromAgentName(JaznEnvironment context, String agentName) {
+	public static IPlayer getPlayerFromAgentName(String agentName) {
 		for (Team t : Team.values()) {
 			if (agentName.startsWith(t.getShortName())) {
 				int jersey = Integer.parseInt(agentName.replace(t.getShortName(), ""));
 
-				Map<Role, List<IPlayer>> rose = context.getPlayers().get(t);
+				Map<Role, List<IPlayer>> rose = JaznEnvironment.getPlayers().get(t);
 
 				for (Role r : rose.keySet()) {
 					for (IPlayer p : rose.get(r)) {

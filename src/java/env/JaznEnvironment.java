@@ -23,13 +23,42 @@ public class JaznEnvironment extends Environment {
 	public static final Literal ball = Literal.parseLiteral("ball");
 	public static final String passToPrefix = "passTo_";
 
-	private Map<Team, Map<Role, List<IPlayer>>> players;
+	private static Map<Team, Map<Role, List<IPlayer>>> players;
 	private List<IPlayer> goals;
 	private Logger log = Logger.getLogger("jazn."+JaznEnvironment.class.getName());
     
 	@Override
 	public void init(String[] args) {
 		log.info("Environment initialized successfully.");
+	}
+
+	@Override
+	public boolean executeAction(String agName, Structure action) {
+		boolean execute = false;
+		if(action.equals(prepareField)) {
+			log.info("Preparing field...");
+			this.prepareField();
+			execute = true;
+		}
+		
+		if(action.equals(tryGoal)) {
+			IPlayer player = JaznUtils.getPlayerFromAgentName(agName);
+			if(player == null) {
+				return execute;
+			}
+			
+			tryGoal(agName, player);
+			
+			execute = true;
+		}
+		
+		for(Role r: Role.values()) {
+			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
+				passBall(agName, r);
+				execute = true;
+			}
+		}
+		return execute;
 	}
 	
 	public void whistle(IPlayer kickoff) {
@@ -60,8 +89,8 @@ public class JaznEnvironment extends Environment {
 		log.info("Percepts adding completed.");
 	}
 	
-	public Map<Team, Map<Role, List<IPlayer>>> getPlayers() {
-		return this.players;
+	public static Map<Team, Map<Role, List<IPlayer>>> getPlayers() {
+		return players;
 	}
 	
 	private void setPerceptsFor(IPlayer p) {
@@ -75,48 +104,18 @@ public class JaznEnvironment extends Environment {
 		addPercept(p.getName(), Literal.parseLiteral(rolePercept));
 	}
 	
-	@Override
-	public boolean executeAction(String agName, Structure action) {
-		boolean execute = false;
-		if(action.equals(prepareField)) {
-			log.info("Preparing field...");
-			this.prepareField();
-			execute = true;
-		}
-		
-		if(action.equals(tryGoal)) {
-			IPlayer player = JaznUtils.getPlayerFromAgentName(this, agName);
-			if(player == null) {
-				return execute;
-			}
-			
-			tryGoal(agName, player);
-			
-			execute = true;
-		}
-		
-		for(Role r: Role.values()) {
-
-			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
-				passBall(agName, r);
-				execute = true;
-			}
-		}
-		return execute;
-	}
-	
 	private void clearBall(String sender) {
-		clearPercepts(sender);
-		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(this, sender);
-		setPerceptsFor(senderAgent);
-		
+		//clearPercepts(sender);
+		removePercept(sender,Literal.parseLiteral("ball"));
+		//IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(sender);
+		//setPerceptsFor(senderAgent);
 	}
 	
 	private void passBall(String sender, Role r) {
 
 		clearBall(sender);
 
-		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(this, sender);
+		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(sender);
 		
 		boolean intercepts = Utils.shouldInterceptBall() && r != Role.GOALKEEPER;
 		
@@ -132,7 +131,7 @@ public class JaznEnvironment extends Environment {
 					role = inverse;
 				}
 				
-				List<IPlayer> nextLine = JaznUtils.getPlayers(this, t, role);
+				List<IPlayer> nextLine = JaznUtils.getPlayers(t, role);
 				IPlayer p = Utils.randomIn(nextLine); // can also be a peer
 
 				if(intercepts) {
@@ -161,7 +160,7 @@ public class JaznEnvironment extends Environment {
 		}
 		
 		Team other = player.getTeam().getOtherTeam();
-		IPlayer goalkeeper = JaznUtils.getPlayers(this, other, Role.GOALKEEPER).get(0);
+		IPlayer goalkeeper = JaznUtils.getPlayers(other, Role.GOALKEEPER).get(0);
 		log.info("Ball is now of " + goalkeeper.toString());
 		passBall(goalkeeper.getName(), goalkeeper.getRole());
 	
@@ -174,7 +173,7 @@ public class JaznEnvironment extends Environment {
 		Team[] teams = Team.values();
 		Role[] roles = Role.values();
 
-		this.players = new HashMap<Team, Map<Role, List<IPlayer>>>();
+		players = new HashMap<Team, Map<Role, List<IPlayer>>>();
 		this.goals = new ArrayList<IPlayer>();
 
 		System.out
@@ -197,13 +196,13 @@ public class JaznEnvironment extends Environment {
 
 				rls.put(r, pls);
 			}
-			this.players.put(t, rls);
+			players.put(t, rls);
 		}
 
-		this.setPlayersPercepts(this.players);
+		this.setPlayersPercepts(players);
 
 		Team randomTeam = Utils.randomIn(Team.values());
-		IPlayer kickoff = Utils.randomIn(this.players.get(randomTeam).get(Role.MIDFIELDER));
+		IPlayer kickoff = Utils.randomIn(players.get(randomTeam).get(Role.MIDFIELDER));
 		System.out.println("The player assigned for kickoff is " + kickoff.toString());
 		System.out.println("Referee, WHISTLE!");
 
@@ -216,13 +215,8 @@ public class JaznEnvironment extends Environment {
 		System.out.println("Current score: ");
 		
 		for(Team t : Team.values()) {
-			int goals = 0;
-			for(IPlayer player : this.goals) {
-				if(player.getTeam() == t) {
-					goals++;
-				}
-			}
-			System.out.println(" - " + t.name() + " : " + goals);
+			int g = JaznUtils.goalsForTeam(this.goals, t);
+			System.out.println(" - " + t.name() + " : " + g);
 		}
 		return true;
 	}
