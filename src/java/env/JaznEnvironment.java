@@ -109,8 +109,13 @@ public class JaznEnvironment extends Environment {
 		clearBall(sender);
 
 		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(sender);
+		Role inverse = senderAgent.getRole().getInverse();
+		boolean intercepts = Utils.shouldInterceptBall();
 		
-		boolean intercepts = Utils.shouldInterceptBall() && r != Role.GOALKEEPER;
+		if(r == Role.GOALKEEPER) {
+			intercepts = true;
+			inverse = Role.GOALKEEPER;
+		}
 		
 		for(Team t : Team.values()) {
 			
@@ -119,7 +124,6 @@ public class JaznEnvironment extends Environment {
 			if((isFromMyTeam && !intercepts) || (!isFromMyTeam && intercepts)){
 				
 				Role role = r;
-				Role inverse = senderAgent.getRole().getInverse();
 				if(intercepts && inverse != null) {
 					role = inverse;
 				}
@@ -140,6 +144,7 @@ public class JaznEnvironment extends Environment {
 		
 	}
 	
+	/*
 	private void tryGoal(String agName, IPlayer player) {
 		
 		clearBall(agName);
@@ -157,7 +162,7 @@ public class JaznEnvironment extends Environment {
 		log.info("Ball is now of " + goalkeeper.toString());
 		passBall(goalkeeper.getName(), goalkeeper.getRole());
 	
-	}
+	}*/
 
 	public void prepareField() {
 
@@ -201,7 +206,7 @@ public class JaznEnvironment extends Environment {
 
 		this.whistle(kickoff);
 	}
-
+/*
 	public boolean scored(IPlayer p) {
 		this.goals.add(p);
 		System.out.println("GOAAAAAL by " + p.toString());
@@ -213,5 +218,6 @@ public class JaznEnvironment extends Environment {
 		}
 		return true;
 	}
+	*/
 
 }

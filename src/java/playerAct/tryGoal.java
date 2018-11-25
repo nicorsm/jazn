@@ -40,13 +40,13 @@ public class tryGoal extends DefaultInternalAction {
 		
 		//clearBall(agName);
 
-		log.info("ACTION OMG " + player.toString() + " IS TRYING A GOAL...");
+		log.info("OMG " + player.toString() + " IS TRYING A GOAL...");
 		
 
 		if(Utils.shouldTryGoal()) {
 			//this.scored(player);
 		} else {
-			log.info("ACTION No way :(");
+			log.info("No way :(");
 		}
 		
 		Team other = player.getTeam().getOtherTeam();

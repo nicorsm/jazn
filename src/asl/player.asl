@@ -29,15 +29,17 @@
 			 .print("GOOOOAAAAALLLLL!!!!! I'll tell it to the referee...");
 			 .send(referee, tell, scored);
 			 .print("I'll pass back the ball to the midfielder");
-			 .send(playerAct.playerToPass(midfielder), tell, ball).
+			 passTo_midfielder.
 			 
 -!tryGoal <- .print("No way :(");
-			 .print("I'll pass the ball to the midfielder of the other team.");
-			 .send(playerAct.playerToPass(goalkeeper), tell, ball).
+			 .print("I'll pass the ball to the goalkeeper of the other team.");
+			 passTo_goalkeeper.
 
 +!passBall : goalkeeper <- passTo_defender.
 +!passBall : defender <- passTo_midfielder.
 +!passBall : midfielder <- passTo_forward.
+
++!passBallAfterGoal(recipient) <- .print(recipient); .send(recipient, tell, ball).
 
 +!wait_randomly <-
 	.random(R);
