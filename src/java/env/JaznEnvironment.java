@@ -49,13 +49,7 @@ public class JaznEnvironment extends Environment {
 		}
 		return execute;
 	}
-	
-	public void whistle(IPlayer kickoff) {
-		log.info("Adding a percept for whistle");
-		addPercept("referee", Literal.parseLiteral("whistled"));
-		addPercept(kickoff.getName(), ball);
-	}
-	
+
 	public void setPlayersPercepts(Map<Team, Map<Role, List<IPlayer>>> map) {
 		
 		log.info("Adding percepts for players...");
@@ -170,6 +164,8 @@ public class JaznEnvironment extends Environment {
 		System.out.println("The player assigned for kickoff is " + kickoff.toString());
 		System.out.println("Referee, WHISTLE!");
 
-		this.whistle(kickoff);
+		log.info("Adding a percept for whistle");
+		addPercept("referee", Literal.parseLiteral("whistled"));
+		addPercept(kickoff.getName(), ball);
 	}
 }

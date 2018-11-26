@@ -2,16 +2,10 @@
 
 /* Initial beliefs and rules */
 
-//!beginPlaying.
 
 /* Initial goals */
-//!tryGoal.
-//!handleBall.
-//!wait_randomly.
 
-//+startGame(referee) : true <- .print("OMG HAS WHISTLED!"); !handleBall.
-
-+ball <-  !handleBall. //.print("GOT THE BALL, THANKS BRO!");
++ball <-  !handleBall.
 
 +!handleBall : ball & forward <- .print("Whoa I can try a goal..."); 
 								 !wait_randomly;
@@ -21,7 +15,7 @@
 +!handleBall : ball & not forward <- .print("I'll pass the ball..."); 
 									 !wait_randomly; 
 									 .abolish(ball);
-									 !passBall.
+									 !tryGoal. //!passBall.
 -!handleBall : not ball <- true.
 
 +!tryGoal <- .print("I'll try a goal!");
@@ -31,8 +25,7 @@
 			 .print("I'll pass back the ball to the midfielder");
 			 passTo_midfielder.
 			 
-+!notifyReferee : team(cesenaUnited) <- .send(referee, tell, cuHasScored).
-+!notifyReferee : team(forliCity) <- .send(referee, tell, fcHasScored).
++!notifyReferee : team(X) <- .send(referee, achieve, scored(X)).
 			 
 -!tryGoal <- .print("No way :(");
 			 .print("I'll pass the ball to the goalkeeper of the other team.");
@@ -44,7 +37,7 @@
 
 +!wait_randomly <-
 	.random(R);
-	.wait(R * 5000).
+	.wait(R * 0).
 
 +?shouldTryGoal <- .random(R); R > 0.8.
 +?shouldInterceptBall <- .random(R); R > 0.6 & (goalkeeper | defender | midfielder).
