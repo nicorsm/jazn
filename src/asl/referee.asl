@@ -2,6 +2,9 @@
 
 /* Initial beliefs and rules */
 
+cu_goals(0).
+fc_goals(0).
+
 /* Initial goals */
 
 !startMatch.
@@ -15,9 +18,14 @@
 +!tellWhistle: whistled <- .print("WHISTLING..."); .broadcast(tell, startGame(referee)).
 
 
-+scored <- .print("Someone has scored").
++cuHasScored <- -cu_goals(X); 
+				+cu_goals(X+1); 
+				.print("Cesena United has scored: ", X+1);
+				!printCompleteScore.
+				
++fcHasScored <- -fc_goals(X); 
+				+fc_goals(X+1); 
+				.print("Forli City has scored: ", X+1);
+				!printCompleteScore.
 
-//+whistled(_): ~whistled(referee) <- -~whistled(referee).
-
-//if not whistled, do no-op.
-
++!printCompleteScore : fc_goals(X) & cu_goals(Y) <- .print("Current score is \n - Forli City: ", X, "\n - Cesena United: ", Y).

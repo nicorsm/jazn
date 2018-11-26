@@ -41,17 +41,6 @@ public class JaznEnvironment extends Environment {
 			execute = true;
 		}
 		
-		if(action.equals(tryGoal)) {
-			IPlayer player = JaznUtils.getPlayerFromAgentName(agName);
-			if(player == null) {
-				return execute;
-			}
-			
-			tryGoal(agName, player);
-			
-			execute = true;
-		}
-		
 		for(Role r: Role.values()) {
 			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
 				passBall(agName, r);
@@ -100,14 +89,10 @@ public class JaznEnvironment extends Environment {
 		return players;
 	}
 	
-	private void clearBall(String sender) {
-		removePercept(sender, ball);
-	}
-	
 	private void passBall(String sender, Role r) {
 
-		clearBall(sender);
-
+		removePercept(sender, ball);
+		
 		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(sender);
 		Role inverse = senderAgent.getRole().getInverse();
 		boolean intercepts = Utils.shouldInterceptBall();
@@ -132,37 +117,18 @@ public class JaznEnvironment extends Environment {
 				IPlayer p = Utils.randomIn(nextLine); // can also be a peer
 
 				if(intercepts) {
-					log.info("BALL WAS INTERCEPTED BY " + p.toString());
+					log.info("Ouch, ball was intercepted by " + p.toString());
 				} else {
 					log.info("Passing ball to " +  p.toString());
 				}
-				
+
+				removePercept(p.getName(), ball);
 				addPercept(p.getName(), ball);
 				return;
 			}
 		}
 		
 	}
-	
-	/*
-	private void tryGoal(String agName, IPlayer player) {
-		
-		clearBall(agName);
-
-		log.info("OMG " + player.toString() + " IS TRYING A GOAL...");
-		
-		if(Utils.shouldTryGoal()) {
-			this.scored(player);
-		} else {
-			log.info("No way :(");
-		}
-		
-		Team other = player.getTeam().getOtherTeam();
-		IPlayer goalkeeper = JaznUtils.getPlayers(other, Role.GOALKEEPER).get(0);
-		log.info("Ball is now of " + goalkeeper.toString());
-		passBall(goalkeeper.getName(), goalkeeper.getRole());
-	
-	}*/
 
 	public void prepareField() {
 
@@ -206,18 +172,4 @@ public class JaznEnvironment extends Environment {
 
 		this.whistle(kickoff);
 	}
-/*
-	public boolean scored(IPlayer p) {
-		this.goals.add(p);
-		System.out.println("GOAAAAAL by " + p.toString());
-		System.out.println("Current score: ");
-		
-		for(Team t : Team.values()) {
-			int g = JaznUtils.goalsForTeam(this.goals, t);
-			System.out.println(" - " + t.name() + " : " + g);
-		}
-		return true;
-	}
-	*/
-
 }

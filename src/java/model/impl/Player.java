@@ -76,7 +76,7 @@ public class Player implements IPlayer {
 	
 	@Override
 	public String toString() {
-		return "[ " + getName() + " ], " + role + " of " + team;
+		return "[" + getName() + "], " + role + " of " + team;
 	}
 	
 	public String getName() {
