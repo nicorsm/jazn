@@ -37,7 +37,7 @@
 
 +!wait_randomly <-
 	.random(R);
-	.wait(R * 0).
+	.wait(R * 50).
 
 +?shouldTryGoal <- .random(R); R > 0.8.
 +?shouldInterceptBall <- .random(R); R > 0.6 & (goalkeeper | defender | midfielder).
