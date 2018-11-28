@@ -13,12 +13,14 @@ availableSwaps(3).
 
 +!start <- .print("Hello, I'm ready!").
 
-+!otherTeamHasScored(X) <- .print("Mmmh I'm thinking about swapping someone....");
++!otherTeamHasScored(X, agent) <- .print("Mmmh I'm thinking about swapping someone....");
 						   ?shouldIChangeSomeone(X);
 						   .print("Yeah it's better to do a swap.");
 						   ?areThereAvailableSwaps;
 						   -availableSwaps(S);
 						   +availableSwaps(S-1);
+						   .kill_agent(agent); //uno a caso
+						   .create_agent(agent, "player.asl");
 						   .print("Ok, now I have other ", S-1, " swaps available.").
 
 +!blamePlayersRandomly <- .print("Ma che cazzo faaaaaaiiiiiii").
