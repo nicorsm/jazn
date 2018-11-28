@@ -100,10 +100,41 @@ public class JaznEnvironment extends Environment {
 		}
 		
 		log.info("Percepts adding completed.");
+		
 	}
 	
-	public static Map<Team, Map<Role, List<IPlayer>>> getPlayers() {
-		return players;
+	@Override
+	public boolean executeAction(String agName, Structure action) {
+		boolean execute = false;
+		if(action.equals(prepareField)) {
+			log.info("Preparing field...");
+			gameManager.prepareField();
+			execute = true;
+		}
+		
+		if(action.equals(tryGoal)) {
+			IPlayer player = this.gameManager.getPlayerFromAgentName(agName);
+			if(player == null) {
+				return execute;
+			}
+			
+			tryGoal(agName, player);
+			
+			execute = true;
+		}
+		
+		for(Role r: Role.values()) {
+
+			if(action.equals(Literal.parseLiteral(passToPrefix + r.name().toLowerCase()))) {
+				passBall(agName, r);
+				execute = true;
+			}
+		}
+		return execute;
+	}
+	
+	private void clearBall(String sender) {
+		removePercept(sender, ball);
 	}
 	
 	private void passBall(String sender, Role r) {
