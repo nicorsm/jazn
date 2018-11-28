@@ -5,6 +5,8 @@ MAS jazn {
 	environment: env.JaznEnvironment
 
 	agents:
+		fcCoach coach;
+		cuCoach coach;
 		referee; // agentClass Referee;
 		forliCity player #11; // agentClass Player #11;
 		cesenaUnited player #11; // agentClass Player #11;
