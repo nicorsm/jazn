@@ -7,9 +7,9 @@ MAS jazn {
 	agents:
 		fcCoach coach;
 		cuCoach coach;
-		referee; // agentClass Referee;
-		forliCity player #11; // agentClass Player #11;
-		cesenaUnited player #11; // agentClass Player #11;
+		referee;
+		forliCity player #11;
+		cesenaUnited player #11;
 
 	aslSourcePath:
 		"src/asl";

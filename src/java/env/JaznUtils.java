@@ -1,5 +1,6 @@
 package env;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,15 +33,34 @@ public class JaznUtils {
 		return null;
 	}
 
-	public static int goalsForTeam(List<IPlayer> goals, Team t) {
-		int scored = 0;
-		for (IPlayer p : goals) {
-			if (p.getTeam() == t) {
-				scored++;
-			}
-		}
-		return scored;
+	public static List<IPlayer> getFlatPlayers(Map<Team, Map<Role, List<IPlayer>>> players) {
+		return getFlatPlayers(players, null);
 	}
 	
+	public static List<IPlayer> getFlatPlayers(Map<Team, Map<Role, List<IPlayer>>> players, Team team) {
+		List<IPlayer> plist = new ArrayList<IPlayer>();
 
+		for(Team t: players.keySet()) {
+			
+			if(team == null || team == t) {
+				Map<Role, List<IPlayer>> rose = players.get(t);
+				
+				for(Role r: rose.keySet()) {
+					
+					List<IPlayer> pls = rose.get(r);
+						
+					for(IPlayer p: pls) {
+						plist.add(p);
+					}
+				}
+			}
+			
+		}
+		
+		return plist;
+	}
+
+	public static boolean shouldInterceptBall() {
+		return Math.random() > 0.60;
+	}
 }

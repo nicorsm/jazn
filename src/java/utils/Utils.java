@@ -12,17 +12,5 @@ public class Utils {
 	public static <T> T randomIn(T[] list) {
 		return list[new Random().nextInt(list.length)];
 	}
-	
-	public static boolean getRandomBoolean() {
-		return Math.random() < 0.5;
-	}
-
-	public static boolean shouldTryGoal() {
-		return Math.random() > 0.80;
-	}
-	
-	public static boolean shouldInterceptBall() {
-		return Math.random() > 0.60;
-	}
 }
 

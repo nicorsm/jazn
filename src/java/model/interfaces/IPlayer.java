@@ -7,9 +7,7 @@ public interface IPlayer {
 
 	public Team getTeam();
 	public int getJerseyNumber();
-	public IPosition getPosition();
 	public Role getRole();
-	public void receive(IBall ball);
 	public String getName();
 	
 }
