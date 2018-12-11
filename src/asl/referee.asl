@@ -9,12 +9,11 @@ fc_goals(0).
 
 +whistled : whistled <- .print("WHISTLING..."); 
 						.broadcast(tell, startGame(referee)).
-						+whistleTime(.time).
 						
--whistled <- .print("WHISTLED! GAME ENDED!"); 
-						!printCompleteScore;
-						.wait(10000);
-						.stopMAS.
+-whistled <- .print("WHISTLE!! WHISTLE!! WHISTLE!!\nGAME ENDED!!!"); 
+			 !printCompleteScore;
+			 .wait(10000);
+			 .stopMAS.
 
 +!scored(cesenaUnited) <- -cu_goals(X); 
 					      +cu_goals(X+1);
@@ -28,4 +27,4 @@ fc_goals(0).
 					   .send(cuCoach, achieve, otherTeamHasScored(X+1));
 					   !printCompleteScore.
 
-+!printCompleteScore : fc_goals(X) & cu_goals(Y) <- .print("\n - Forli City: ", X, "\n - Cesena United: ", Y).
++!printCompleteScore : fc_goals(X) & cu_goals(Y) <- .print("Score: \n - Forli City: ", X, "\n - Cesena United: ", Y).

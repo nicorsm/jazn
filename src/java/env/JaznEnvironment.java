@@ -48,8 +48,8 @@ public class JaznEnvironment extends Environment {
 	public static Date whistleDate;
 
 	private static Map<Team, Map<Role, List<IPlayer>>> players = new HashMap<Team, Map<Role, List<IPlayer>>>();
-	private Logger log = Logger.getLogger("jazn."+JaznEnvironment.class.getName());
-    
+	private Logger log = Logger.getLogger("jazn." + JaznEnvironment.class.getName());
+
 	@Override
 	public void init(String[] args) {
 		log.info("Environment initialized successfully.");
@@ -58,68 +58,79 @@ public class JaznEnvironment extends Environment {
 	@Override
 	public boolean executeAction(String agName, Structure action) {
 		boolean execute = false;
-		
-		if(action.equals(prepareField)) {
+
+		if (action.equals(prepareField)) {
 			log.info("Preparing field...");
 			this.prepareField();
 			execute = true;
 		}
-		
-		if(action.getFunctor().equals(passTo)) {
+
+		if (action.getFunctor().equals(passTo)) {
 
 			Date d = new Date();
-			
-			if(d.getTime() > whistleDate.getTime() + 5 * 60 * 1000) { //Stops after 5 mins.
-				//Time elapsed, referee....
+
+			if (d.getTime() > whistleDate.getTime() + 5 * 60 * 1000) { // Stops after 5 mins.
+				// Time elapsed, referee....
 				log.info("Time elapsed!");
 				removePercept("referee", whistled);
 			} else {
 				String term = action.getTerms().get(0).toString().toUpperCase();
+				boolean sameTeam = Boolean.parseBoolean(action.getTerms().get(1).toString());
 				Role r = Role.valueOf(term);
-				passBall(agName, r);
+				passBall(agName, r, sameTeam);
 			}
-			
+
 			execute = true;
 		}
-		
+
 		return execute;
 	}
-	
+
 	public static Map<Team, Map<Role, List<IPlayer>>> getPlayers() {
 		return players;
 	}
-	
-	private void passBall(String sender, Role r) {
+
+	private void passBall(String sender, Role r, boolean sameTeam) {
 
 		removePercept(sender, ball);
-		
+
 		IPlayer senderAgent = JaznUtils.getPlayerFromAgentName(sender);
 		Role inverse = senderAgent.getRole().getInverse();
 		boolean intercepts = JaznUtils.shouldInterceptBall();
-		
-		if(r == Role.GOALKEEPER) {
+
+		if (!sameTeam) { // Rimessa
+
 			intercepts = true;
-			inverse = Role.GOALKEEPER;
+
+			if (r == Role.GOALKEEPER) {
+				inverse = Role.GOALKEEPER;
+			} else if (r == Role.FORWARD) {
+				inverse = Role.MIDFIELDER;
+			}
 		}
-		
-		for(Team t : Team.values()) {
-			
+
+		for (Team t : Team.values()) {
+
 			boolean isFromMyTeam = sender.startsWith(t.getShortName());
-			
-			if((isFromMyTeam && !intercepts) || (!isFromMyTeam && intercepts)){
-				
+
+			if ((isFromMyTeam && !intercepts) || (!isFromMyTeam && intercepts)) {
+
 				Role role = r;
-				if(intercepts && inverse != null) {
+				if (intercepts && inverse != null) {
 					role = inverse;
 				}
-				
+
 				List<IPlayer> nextLine = JaznUtils.getPlayers(t, role);
 				IPlayer p = Utils.randomIn(nextLine); // can also be a peer
 
-				if(intercepts) {
-					log.info("Ouch, ball was intercepted by " + p.toString());
+				if (intercepts) {
+					if (sameTeam) {
+						log.info("Ouch, ball was intercepted by " + p.toString());
+					} else {
+						log.info("Ball was passed to " + p.toString());
+					}
 				} else {
-					log.info("Passing ball to " +  p.toString());
+					log.info("Passing ball to " + p.toString());
 				}
 
 				removePercept(p.getName(), ball);
@@ -127,7 +138,7 @@ public class JaznEnvironment extends Environment {
 				return;
 			}
 		}
-		
+
 	}
 
 	public void prepareField() {
@@ -135,7 +146,7 @@ public class JaznEnvironment extends Environment {
 		log.info("The referee is preparing the match...");
 
 		this.buildSchema();
-		
+
 		Team randomTeam = Utils.randomIn(Team.values());
 		IPlayer kickoff = Utils.randomIn(players.get(randomTeam).get(Role.MIDFIELDER));
 		log.info("The player assigned for kickoff is " + kickoff.toString());
@@ -145,13 +156,13 @@ public class JaznEnvironment extends Environment {
 		whistleDate = new Date();
 		addPercept(kickoff.getName(), ball);
 	}
-	
+
 	private void buildSchema() {
 
 		Team[] teams = Team.values();
-		
+
 		log.info("Players on the pitch for today's match between " + teams[0] + " and " + teams[1] + " are: ");
-		
+
 		for (Team t : teams) {
 			int jersey = 1;
 
@@ -168,7 +179,7 @@ public class JaznEnvironment extends Environment {
 					addPercept(p.getName(), Literal.parseLiteral("team(" + t.getShortName() + ")"));
 					addPercept(p.getName(), Literal.parseLiteral("jersey(" + p.getJerseyNumber() + ")"));
 					addPercept(p.getName(), Literal.parseLiteral("role(" + r.toString().toLowerCase() + ")"));
-					
+
 					jersey++;
 				}
 
@@ -176,7 +187,7 @@ public class JaznEnvironment extends Environment {
 			}
 			players.put(t, rls);
 		}
-		
+
 	}
-	
+
 }
